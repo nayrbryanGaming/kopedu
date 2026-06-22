@@ -1,26 +1,153 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
+  --font-display: var(--font-playfair);
+  --font-heading: var(--font-playfair);
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-accent-soft: var(--accent-soft);
+  --color-line: var(--line);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  /* KopEdu editorial palette */
+  --background: #f7f5f0; /* warm cream */
+  --foreground: #1c1c1a; /* earth black */
+  --ink: #1c1c1a;
+  --ink-2: #6b6860; /* secondary text */
+  --line: #e2ded8; /* hairline border */
+
+  --card: #ffffff;
+  --card-foreground: #1c1c1a;
+  --popover: #ffffff;
+  --popover-foreground: #1c1c1a;
+
+  --primary: #2d6a4f; /* cooperative green */
+  --primary-foreground: #ffffff;
+  --secondary: #ffffff;
+  --secondary-foreground: #1c1c1a;
+  --muted: #f0ede6;
+  --muted-foreground: #6b6860;
+  --accent: #b7e4c7; /* soft green highlight */
+  --accent-foreground: #2d6a4f;
+  --accent-soft: #b7e4c7;
+
+  --destructive: #c0392b;
+  --border: #e2ded8;
+  --input: #e2ded8;
+  --ring: #2d6a4f;
+
+  --radius: 8px;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-background text-foreground;
+    line-height: 1.6;
+    font-feature-settings: "ss01", "cv01";
+  }
+  ::selection {
+    background: var(--accent-soft);
+    color: var(--primary);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .font-display {
+    font-family: var(--font-playfair), serif;
+  }
+  .font-mono-data {
+    font-family: var(--font-jetbrains), monospace;
+  }
+  .container-edge {
+    width: 100%;
+    max-width: 1160px;
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+  .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+  .hairline {
+    border-top: 1px solid var(--line);
+  }
+  /* Grain / paper texture, kept subtle */
+  .paper-grain {
+    background-image: radial-gradient(
+      rgba(28, 28, 26, 0.025) 1px,
+      transparent 1px
+    );
+    background-size: 4px 4px;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom scrollbar — restrained */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 100px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

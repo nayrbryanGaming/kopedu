@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KopEdu
 
-## Getting Started
+> Pahami Koperasi. Kuasai Ekonomimu.
 
-First, run the development server:
+Platform edukasi koperasi interaktif berbasis gamifikasi dan AI tutor untuk pelajar
+dan mahasiswa Indonesia. Dibangun oleh tim **GotongDigital** untuk Hackathon Kemenkop
+RI 2026 — Pilar 4: Literasi Gen-Z & Gen-Alpha dalam Berkoperasi.
+
+## Fitur
+
+- **Landing editorial** dengan hero 3D interaktif (React Three Fiber) dan animasi
+  bertahap di seluruh halaman.
+- **Dashboard** dengan signature "journey track" — visualisasi perjalanan belajar
+  delapan modul.
+- **Halaman modul** dengan materi dan kuis interaktif inline (feedback langsung).
+- **KopBot** — AI tutor koperasi yang dialiri streaming melalui **Groq LLM**
+  (`llama-3.3-70b-versatile`), dipanggil dari server-side route agar API key aman.
+- **Profil** dengan poin, badge, dan progress sertifikat digital.
+
+## Tech Stack
+
+- Next.js 16 (App Router) · React 19 · TypeScript
+- Tailwind CSS v4 · shadcn/ui · Skiper UI (`@skiper-ui/skiper40`)
+- motion (Framer Motion) untuk animasi · React Three Fiber + drei untuk 3D
+- Groq SDK untuk KopBot
+
+## Menjalankan Lokal
 
 ```bash
+npm install
+cp .env.example .env.local   # lalu isi GROQ_API_KEY
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable       | Deskripsi                                             |
+| -------------- | ----------------------------------------------------- |
+| `GROQ_API_KEY` | API key Groq (server-side). Wajib untuk fitur KopBot. |
 
-## Learn More
+API key **tidak pernah** dikirim ke browser — seluruh panggilan LLM melewati
+route `app/api/kopbot`.
 
-To learn more about Next.js, take a look at the following resources:
+## Struktur
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+  app/
+    page.tsx                  Landing
+    daftar/ masuk/            Auth (UI)
+    dashboard/                Beranda, modul, modul/[id], tanya (KopBot), profil
+    api/kopbot/route.ts       Endpoint streaming Groq
+  components/                 Navbar, footer, hero 3D, motion primitives, dll.
+  lib/data.ts                 Data modul, statistik, materi & kuis
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Lisensi
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Dibuat untuk keperluan hackathon. Komponen Skiper UI mengikuti lisensinya
+masing-masing.
