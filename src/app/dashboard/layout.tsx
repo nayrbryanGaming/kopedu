@@ -10,7 +10,7 @@ export default function DashboardLayout({
     <div className="flex min-h-screen">
       <ScrollProgress />
       <Sidebar />
-      <div className="flex-1 pb-16 md:pb-0">{children}</div>
+      <div className="min-w-0 flex-1">{children}</div>
       <MobileTabbar />
     </div>
   );

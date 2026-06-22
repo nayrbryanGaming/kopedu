@@ -3,6 +3,7 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { chatSuggestions } from "@/lib/data";
+import { recordActivity } from "@/lib/progress";
 
 type Msg = { role: "user" | "assistant"; content: string; time: string };
 
@@ -35,6 +36,9 @@ export function KopbotChat() {
     setMessages(nextMessages);
     setInput("");
     setStreaming(true);
+    recordActivity(
+      `Bertanya ke KopBot: "${trimmed.length > 48 ? trimmed.slice(0, 48) + "..." : trimmed}"`,
+    );
 
     // Placeholder assistant message we stream into
     setMessages((m) => [...m, { role: "assistant", content: "", time: now() }]);
@@ -92,7 +96,7 @@ export function KopbotChat() {
   const empty = messages.length === 0;
 
   return (
-    <div className="flex h-screen flex-col bg-background md:h-screen">
+    <div className="flex h-[calc(100dvh-3.5rem)] flex-col bg-background md:h-screen">
       {/* Header */}
       <div className="border-b border-line bg-card px-6 py-4">
         <h1 className="font-display text-xl font-bold text-ink">KopBot</h1>

@@ -3,27 +3,24 @@
 import * as React from "react";
 import { motion, useInView } from "motion/react";
 import { modules } from "@/lib/data";
+import { useProgress, activeModuleId } from "@/lib/progress";
 
-export function JourneyTrack({ activeId = 3 }: { activeId?: number }) {
+export function JourneyTrack() {
   const ref = React.useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
+  const progress = useProgress();
 
-  const doneCount = modules.filter((m) => m.done).length;
+  const activeId = activeModuleId(progress);
   const activeIndex = modules.findIndex((m) => m.id === activeId);
-  const fillIndex = activeIndex >= 0 ? activeIndex : doneCount;
+  const fillIndex = activeIndex >= 0 ? activeIndex : 0;
   const fillPct = (fillIndex / (modules.length - 1)) * 100;
 
   return (
-    <div
-      ref={ref}
-      className="rounded-md border border-line bg-card p-6 sm:p-8"
-    >
+    <div ref={ref} className="rounded-md border border-line bg-card p-6 sm:p-8">
       <p className="eyebrow mb-8 text-ink-2">Perjalanan Belajarmu</p>
 
       <div className="relative flex items-start justify-between pb-2">
-        {/* base line */}
         <div className="absolute left-0 right-0 top-[10px] h-0.5 bg-line" />
-        {/* fill line */}
         <motion.div
           className="absolute left-0 top-[10px] h-0.5 bg-primary"
           initial={{ width: 0 }}
@@ -32,7 +29,7 @@ export function JourneyTrack({ activeId = 3 }: { activeId?: number }) {
         />
 
         {modules.map((m, i) => {
-          const isDone = m.done;
+          const isDone = progress.completedModules.includes(m.id);
           const isActive = m.id === activeId;
           return (
             <div

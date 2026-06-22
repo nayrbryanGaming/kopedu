@@ -1,12 +1,11 @@
-import { ModuleCard } from "@/components/module-card";
+import { ModuleGrid } from "@/components/module-grid";
 import { Reveal } from "@/components/motion";
-import { modules } from "@/lib/data";
 
 export const metadata = { title: "Modul Saya — KopEdu" };
 
 export default function ModulPage() {
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
+    <div className="mx-auto max-w-4xl px-6 py-10 pb-28 md:pb-10">
       <Reveal y={12}>
         <p className="eyebrow mb-2">Kurikulum lengkap</p>
         <h1 className="font-display text-3xl font-bold text-ink">Modul Saya</h1>
@@ -16,10 +15,8 @@ export default function ModulPage() {
         </p>
       </Reveal>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {modules.map((m, i) => (
-          <ModuleCard key={m.id} m={m} showProgress index={i} />
-        ))}
+      <div className="mt-8">
+        <ModuleGrid />
       </div>
     </div>
   );

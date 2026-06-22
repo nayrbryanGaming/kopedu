@@ -4,16 +4,38 @@ import * as React from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import { getLesson, modules, type Quiz } from "@/lib/data";
+import {
+  useProgress,
+  solveQuiz,
+  setModuleProgress,
+  completeModule,
+  POINTS_PER_QUIZ,
+} from "@/lib/progress";
 
 export function LessonView({ id }: { id: number }) {
   const lesson = getLesson(id);
   const moduleMeta = modules.find((m) => m.id === lesson.moduleId);
   const totalParts = lesson.sections.length + lesson.quizzes.length;
-  const [points, setPoints] = React.useState(0);
-  const [solved, setSolved] = React.useState<Set<number>>(new Set());
+  const store = useProgress();
 
-  const completedParts = lesson.sections.length + solved.size;
-  const progress = Math.round((completedParts / totalParts) * 100);
+  const solvedList = store.quizSolved[lesson.moduleId] ?? [];
+  const solvedCount = solvedList.length;
+  const points = solvedCount * POINTS_PER_QUIZ;
+
+  const completedParts = lesson.sections.length + solvedCount;
+  const progress = Math.min(
+    100,
+    Math.round((completedParts / totalParts) * 100),
+  );
+
+  // Persist incremental module progress as quizzes are solved.
+  React.useEffect(() => {
+    if (!store.completedModules.includes(lesson.moduleId)) {
+      setModuleProgress(lesson.moduleId, progress);
+    }
+  }, [progress, lesson.moduleId, store.completedModules]);
+
+  const allSolved = solvedCount >= lesson.quizzes.length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -99,15 +121,8 @@ export function LessonView({ id }: { id: number }) {
               <QuizBlock
                 quiz={lesson.quizzes[i]}
                 index={i}
-                onSolve={() => {
-                  setSolved((prev) => {
-                    if (prev.has(i)) return prev;
-                    const next = new Set(prev);
-                    next.add(i);
-                    setPoints((p) => p + 20);
-                    return next;
-                  });
-                }}
+                solved={solvedList.includes(i)}
+                onSolve={() => solveQuiz(lesson.moduleId, i)}
               />
             )}
           </motion.section>
@@ -126,9 +141,15 @@ export function LessonView({ id }: { id: number }) {
           </span>
           <Link
             href="/dashboard"
-            className="inline-flex h-10 items-center rounded-sm bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-[#1e4d38]"
+            onClick={() => completeModule(lesson.moduleId)}
+            aria-disabled={!allSolved}
+            className={`inline-flex h-10 items-center rounded-sm px-4 text-sm font-semibold transition-colors ${
+              allSolved
+                ? "bg-primary text-primary-foreground hover:bg-[#1e4d38]"
+                : "pointer-events-none bg-muted text-ink-2"
+            }`}
           >
-            Selesai &rarr;
+            {allSolved ? "Selesaikan Modul" : "Jawab semua kuis"} &rarr;
           </Link>
         </div>
       </article>
@@ -139,14 +160,18 @@ export function LessonView({ id }: { id: number }) {
 function QuizBlock({
   quiz,
   index,
+  solved,
   onSolve,
 }: {
   quiz: Quiz;
   index: number;
+  solved: boolean;
   onSolve: () => void;
 }) {
-  const [selected, setSelected] = React.useState<string | null>(null);
-  const [checked, setChecked] = React.useState(false);
+  const [selected, setSelected] = React.useState<string | null>(
+    solved ? quiz.correct : null,
+  );
+  const [checked, setChecked] = React.useState(solved);
   const isCorrect = checked && selected === quiz.correct;
 
   function check() {

@@ -8,11 +8,17 @@ export function ModuleCard({
   m,
   showProgress = false,
   index = 0,
+  progress,
+  done,
 }: {
   m: ModuleItem;
   showProgress?: boolean;
   index?: number;
+  progress?: number;
+  done?: boolean;
 }) {
+  const pct = progress ?? m.progress;
+  const isDone = done ?? m.done;
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -26,7 +32,7 @@ export function ModuleCard({
         <span className="inline-block rounded-[2px] bg-accent px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
           {m.tag}
         </span>
-        {m.done && (
+        {isDone && (
           <span className="rounded-[2px] bg-accent px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary">
             Selesai
           </span>
@@ -42,13 +48,13 @@ export function ModuleCard({
             <motion.div
               className="h-full rounded-[2px] bg-primary"
               initial={{ width: 0 }}
-              whileInView={{ width: `${m.progress}%` }}
+              whileInView={{ width: `${pct}%` }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
             />
           </div>
           <span className="mt-1.5 block font-mono-data text-[11px] text-ink-2">
-            {m.progress}% selesai
+            {pct}% selesai
           </span>
         </div>
       )}
